@@ -3,10 +3,10 @@
 
 def getFile(value):
     if 'Crypto' in value:
-        fileobj=open('ctest.txt')
+        fileobj=open('Crypto.txt')
         return fileobj
     else:
-        fileobj=open("stest.txt")
+        fileobj=open("Stocks.txt")
         return fileobj
 
 
