@@ -1,6 +1,6 @@
 import yfinance as yf
 from datetime import *
-from generics import genericFunctions as gf
+import genericFunctions as gf
 from nsepython import *
 
 

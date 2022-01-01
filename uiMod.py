@@ -1,8 +1,6 @@
 import streamlit as st
-from generics import genericFunctions as gf
-from dataModule import dataModule as dM
-
-
+import genericFunctions as gf
+import dataModule as dM
 
 
 def uiCreator():
@@ -28,18 +26,21 @@ def uiCreator():
     try:
         for i in range(0,len(symbol), 5):
             with one:
-                st.metric(symbol[i].replace(".NS",""), close[i], f"{round(change[i],1)}%")
+                t = "<div>"+symbol[i] + "<span class='highlight "+gf.getColor(change[i])+"'>"+close[i]+\
+                    " <span class='bold'>"+change[i]+"</span>"
+                #st.write(symbol[i].replace(".NS",""), close[i], f"{round(change[i],1)}%")
+                st.write(t,unsafe_allow_html=True)
             with two:
-                st.metric(symbol[i+1].replace(".NS",""), close[i+1], f"{round(change[i+1],1)}%")
+                st.write(symbol[i+1].replace(".NS",""), close[i+1], f"{round(change[i+1],1)}%")
                 print(i+1)
             with three:
-                st.metric(symbol[i+2].replace(".NS",""), close[i+2], f"{round(change[i+2],1)}%")
+                st.write(symbol[i+2].replace(".NS",""), close[i+2], f"{round(change[i+2],1)}%")
                 print(i+2)
             with four:
-                st.metric(symbol[i+3].replace(".NS",""), close[i+3], f"{round(change[i+3],1)}%")
+                st.write(symbol[i+3].replace(".NS",""), close[i+3], f"{round(change[i+3],1)}%")
                 print(i+3)
             with five:
-                st.metric(symbol[i+4].replace(".NS",""), close[i+4], f"{round(change[i+4],1)}%")
+                st.write(symbol[i+4].replace(".NS",""), close[i+4], f"{round(change[i+4],1)}%")
             print(i+3)
     except:
         pass
