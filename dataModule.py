@@ -21,9 +21,9 @@ def getData(file):
         closePrice = data['Close'][symbol].values[0]
         openPrice = data['Open'][symbol].values[0]
         prevClose = data['Close'][symbol].values[1]
-
         change = round(((prevClose -closePrice)/closePrice)*100,1)
-        lst_ticker.append(symbol)
+        print(symbol, closePrice, change)
+        lst_ticker.append(symbol.replace(".NS",""))
         lst_close.append(round(closePrice,1))
         lst_change.append(change)
 
@@ -82,7 +82,6 @@ def getMostActive():
     count = nse_most_active(sort='volume').shape[0]
     for i in range(0, count-1):
         symbol.append(df['symbol'].values[i])
-        lastPrice.append(df['lastPrice'].values[i])
-        pChange.append(df['pChange'].values[i])
+        lastPrice.append(round(df['lastPrice'].values[i],1))
+        pChange.append(round(df['pChange'].values[i],1))
     return (symbol, lastPrice, pChange)
-
