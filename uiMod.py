@@ -28,8 +28,8 @@ def uiCreator():
             with one:
                 t = "<div>"+symbol[i] + "<span class='highlight "+gf.getColor(change[i])+"'>"+close[i]+\
                     " <span class='bold'>"+change[i]+"</span>"
-                #st.write(symbol[i].replace(".NS",""), close[i], f"{round(change[i],1)}%")
-                st.write(t,unsafe_allow_html=True)
+                st.write(symbol[i].replace(".NS",""), close[i], f"{round(change[i],1)}%")
+                #st.write(t , unsafe_allow_html=True)
             with two:
                 st.write(symbol[i+1].replace(".NS",""), close[i+1], f"{round(change[i+1],1)}%")
                 print(i+1)
