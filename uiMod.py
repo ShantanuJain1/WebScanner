@@ -1,43 +1,65 @@
 import streamlit as st
 import dataModule, genericFunctions as gf
-
-
+import scanner
 
 
 def uiCreator():
     symbol = None
     change = None
     close = None
-    type = st.sidebar.selectbox('select', gf.typelist())
+    timeframe = ""
+
+
+    type = st.sidebar.selectbox('Select Type', gf.typelist())
 
     if 'Stocks' in type:
-        scan = st.sidebar.selectbox('select', gf.scanList())
+        scan = st.sidebar.selectbox('Classifier', gf.scanList())
     else:
         scan = ""
 
+    if "Scanner" in scan:
+        timeframe = st.sidebar.selectbox('TimeLine', gf.scanType())
+        type = st.sidebar.selectbox('ScanType', gf.timeType())
+        Buy, Sell , Squeeze = scanner.Scrapper(gf.getTimefolder(timeframe))
+        if 'Buy' in type:
+            if(len(Buy) ==  0):
+                st.write("No Data for the range")
+            symbol, close, change = dataModule.get_StockData(Buy)
+        elif 'Sell' in type:
+            if(len(Sell) ==  0):
+                st.write("No Data for the range")
+            symbol, close, change = dataModule.get_StockData(Sell)
+        else:
+            if(len(Squeeze) ==  0):
+                st.write("No Data for the range")
+            #st.write(Squeeze)
+            symbol, close, change = dataModule.get_StockData(Squeeze)
 
-    st.title(f"{type} {scan} data")
+
+    st.title(f"{type} {scan} {timeframe} data")
 
 
     if 'Crypto' in type:
         symbol, close, change = dataModule.getData(type)
 
-    if type == 'Stocks' and scan != "All":
-        #symbol, close, change = dataModule.getpriceData()
-
+    if type == 'Stocks':
         if 'TopGainer' in scan:
             symbol, close, change = dataModule.getTopGainer()
         elif 'TopLoser' in scan:
             symbol, close, change = dataModule.getTopLoser()
         elif 'VolumeBuzzers' in scan:
             symbol, close, change = dataModule.getMostActive()
-    else:
-        symbol, close, change = dataModule.getData(type)
+        elif 'Scanner' in scan:
+            st.write('timeframe')
+        elif 'All' in scan:
+            symbol, close, change = dataModule.getpriceData()
 
 
-    one, two, three, four, five, six= st.columns(6)
+
+
+    one, two, three, four, five, six, seven = st.columns(7)
     try:
-        for i in range(0,len(symbol), 1):
+        for i in range(0,len(symbol), 7):
             with one:
                 t = gf.getTexthtml(symbol[i],close[i], change[i])
                 st.write(t, unsafe_allow_html=True)
@@ -45,34 +67,29 @@ def uiCreator():
                 i=i+1
                 t = gf.getTexthtml(symbol[i],close[i], change[i])
                 st.write(t, unsafe_allow_html=True)
-                # st.metric(symbol[i+1].replace(".NS",""), close[i+1], f"{round(change[i+1],1)}%")
-                # print(i+1)
             with three:
-                i+=2
+                i+=1
                 t = gf.getTexthtml(symbol[i],close[i], change[i])
                 st.write(t, unsafe_allow_html=True)
-                # st.metric(symbol[i+2].replace(".NS",""), close[i+2], f"{round(change[i+2],1)}%")
-                # print(i+2)
             with four:
-                i+=3
+                i+=1
                 t = gf.getTexthtml(symbol[i],close[i], change[i])
                 st.write(t, unsafe_allow_html=True)
-                # st.metric(symbol[i+3].replace(".NS",""), close[i+3], f"{round(change[i+3],1)}%")
-                # print(i+3)
             with five:
-                i+=4
+                i+=1
                 t = gf.getTexthtml(symbol[i],close[i], change[i])
                 st.write(t, unsafe_allow_html=True)
-            #     st.metric(symbol[i+4].replace(".NS",""), close[i+4], f"{round(change[i+4],1)}%")
-            # print(i+3)
             with six:
-                i+=5
+                i+=1
                 t = gf.getTexthtml(symbol[i],close[i], change[i])
                 st.write(t, unsafe_allow_html=True)
+            with seven:
+                i+=1
+                t = gf.getTexthtml(symbol[i],close[i], change[i])
+                st.write(t, unsafe_allow_html=True)
+
     except:
         pass
-
-
 
 
 uiCreator()
