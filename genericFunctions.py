@@ -41,7 +41,7 @@ def getTexthtml(symbol, close, pChange):
 
     URL = "https://in.tradingview.com/chart/gCiOEGU4/?symbol=NSE:"+symbol
 
-    t = "<div style=\"border:black;border-width:0.5px; border-style:solid ;text-align:center; border-radius: 15px; background:"+getColor(pChange)+"\">" \
+    t = "<div style=\"white-space:pre-wrap;border-width:0.5px; border-style:solid ;text-align:center; border-radius: 15px; background:"+getColor(pChange)+"\">" \
               "<a href ="+URL+" target = \"_blank\"><span style=\"color:white\">"+str(symbol)+"</span></a><br>" \
                 "<span style=\"color:white\">"+str(close)+"</span><br><span style=\"color:white\">"+str(pChange)+"%"+"</span></div>"
     return t

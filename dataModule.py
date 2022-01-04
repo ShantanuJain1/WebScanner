@@ -24,7 +24,7 @@ def getData(file):
         openPrice = data['Open'][symbol].values[0]
         prevClose = data['Close'][symbol].values[1]
         change = round(((prevClose -closePrice)/closePrice)*100,1)
-        print(symbol, closePrice, change)
+        #print(symbol, closePrice, change)
         lst_ticker.append(symbol.replace(".NS",""))
         lst_close.append(round(closePrice,1))
         lst_change.append(change)
