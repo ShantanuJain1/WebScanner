@@ -102,9 +102,9 @@ def getMostActive():
 def getSymbols(file):
     symbols = [(line.strip()) for line in gf.getFile(file)]
 
-def deleteFilesfromFolder(dir):
-    for f in os.listdir(dir):
-        os.remove(os.path.join(dir, f))
+# def deleteFilesfromFolder(dir):
+#     for f in os.listdir(dir):
+#         os.remove(os.path.join(dir, f))
 
 
 def get_StockData(symbols):
