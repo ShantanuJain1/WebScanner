@@ -18,8 +18,8 @@ def getData(file):
 
     for symbol in symbols:
         # try:
-        deleteFilesfromFolder("dataset/currentdata")
-        data.to_csv(f"dataset/currentdata/{symbol}.csv")
+        #deleteFilesfromFolder("dataset/currentdata")
+        #data.to_csv(f"dataset/currentdata/{symbol}.csv")
         closePrice = data['Close'][symbol].values[0]
         openPrice = data['Open'][symbol].values[0]
         prevClose = data['Close'][symbol].values[1]
