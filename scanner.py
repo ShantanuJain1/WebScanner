@@ -40,6 +40,8 @@ def Scrapper(timeframe):
 
         # Below is for Simple Moving average of Volume
         df['20smavol'] = round(df['Volume'].rolling(window=20).mean(),0)
+        # 10 SMA volume
+        df['10smavol'] = round(df['Volume'].rolling(window=10).mean(),0)
 
         #Below is for Keltner Channel Calculations
         df['TR'] = abs(df['High'] - df['Low'])
@@ -64,12 +66,12 @@ def Scrapper(timeframe):
         #------------------squeeze----------
         def in_squeeze(df):
             return df['lower_band'] > df['lower_keltner'] and df['upper_band'] < df['upper_keltner'] \
-                   and df['Close'] < df['upper_keltner']
+                   and df['Close'] < df['upper_keltner'] and df['Volume'] <= df['10smavol']
 
 
         def out_squeeze(df):
             return df['lower_band'] > df['lower_keltner'] and df['upper_band'] < df['upper_keltner'] \
-                   and df['Close'] > df['upper_keltner'] \
+                   and df['Close'] >= df['upper_keltner'] \
                    and df['Volume'] >= (df['20smavol']*2)
 
         def breakdown(df):
@@ -83,7 +85,7 @@ def Scrapper(timeframe):
         df['breakout'] = df.apply(out_squeeze, axis=1)
         df['breakdown'] = df.apply(breakdown, axis=1)
 
-        if df.iloc[-1]['squeeze_on']: #and df.iloc[-1]['squeeze_off']:
+        if df.iloc[-1]['squeeze_on'] and not df.iloc[-1]['breakout']:
             arrSqueeze.append(symbols)
 
         if df.iloc[-1]['breakout'] and df.iloc[-1]['greenCandle']:
@@ -104,12 +106,11 @@ def Scrapper(timeframe):
 
         #------------_Buy---------------
         def buy(df):
-            return df['5EMA'] < df['lower_band'] or df['5EMA'] < df['lower_keltner']
-
+            return df['5EMA'] < df['lower_band']
 
         df['buy'] = df.apply(buy, axis=1)
 
-        if not df.iloc[-2]['buy'] and df.iloc[-1]['buy'] and df.iloc[-1]['greenCandle']:
+        if not df.iloc[-2]['buy'] and df.iloc[-1]['buy']:
             arrBuy.append(symbols)
 
         # #------------Volume Buzzers---------------
