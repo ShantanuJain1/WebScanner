@@ -1,4 +1,6 @@
 import os
+import time
+
 import pandas
 
 df = None
@@ -11,6 +13,7 @@ arrBreakout = []
 tup = None
 
 def Scrapper(timeframe):
+    start = time.time()
     global arrBuy, arrSell, arrBreakout, arrSqueeze
     arrBuy.clear()
     arrSell.clear()
@@ -48,6 +51,16 @@ def Scrapper(timeframe):
         df['lower_keltner'] = df['20sma'] - (df['ATR'])
 
 
+        #-----GreenCandle------
+        def greenCandle(df):
+            return df['Close'] > df['Open']
+
+        def redCandle(df):
+            return df['Close'] < df['Open']
+
+        df['greenCandle'] = df.apply(greenCandle, axis=1)
+        df['redCandle'] = df.apply(redCandle, axis=1)
+
         #------------------squeeze----------
         def in_squeeze(df):
             return df['lower_band'] > df['lower_keltner'] and df['upper_band'] < df['upper_keltner'] \
@@ -59,32 +72,44 @@ def Scrapper(timeframe):
                    and df['Close'] > df['upper_keltner'] \
                    and df['Volume'] >= (df['20smavol']*2)
 
+        def breakdown(df):
+            return df['lower_band'] > df['lower_keltner'] and df['upper_band'] < df['upper_keltner'] \
+                   and df['Close'] < df['lower_keltner'] \
+                   and df['Volume'] >= (df['20smavol']*2)
+
+
 
         df['squeeze_on'] = df.apply(in_squeeze, axis=1)
-        df['squeeze_off'] = df.apply(out_squeeze, axis=1)
+        df['breakout'] = df.apply(out_squeeze, axis=1)
+        df['breakdown'] = df.apply(breakdown, axis=1)
 
         if df.iloc[-1]['squeeze_on']: #and df.iloc[-1]['squeeze_off']:
             arrSqueeze.append(symbols)
 
+        if df.iloc[-1]['breakout'] and df.iloc[-1]['greenCandle']:
+            arrBreakout.append(symbols)
+
         #-------------Sell----------------
         def SellCondition(df):
-            return df['Low'] > df['upper_band'] and df['Close'] > df['5EMA'] and df['Open'] > df['5EMA'] \
-                   and df['Low'] > df['5EMA'] and df['Close'] < df['Open']
+            return df['Low'] > df['upper_band'] and df['Low'] > df['upper_keltner'] and \
+                   df['Low'] > df['5EMA']
 
         df['sell'] = df.apply(SellCondition, axis=1)
 
-        if df.iloc[-1]['sell']:
+        # Condition for Breakdown( Candle breaking out of channel) or sell is true
+        sellOnTop = df.iloc[-1]['sell'] and df.iloc[-1]['redCandle']
+        breakDown = df.iloc[-1]['breakdown'] and df.iloc[-1]['redCandle']
+        if sellOnTop or breakDown:
             arrSell.append(symbols)
 
         #------------_Buy---------------
         def buy(df):
-            # return df['High'] < df['lower_keltner'] and df['lower_keltner'] < df['lower_band'] and\
-            #        df['High'] < df['5EMA']
-            return df['5EMA'] < df['lower_band'] and df['5EMA'] < df['lower_keltner']
+            return df['5EMA'] < df['lower_band'] or df['5EMA'] < df['lower_keltner']
+
 
         df['buy'] = df.apply(buy, axis=1)
 
-        if not df.iloc[-2]['buy'] and df.iloc[-1]['buy']:
+        if not df.iloc[-2]['buy'] and df.iloc[-1]['buy'] and df.iloc[-1]['greenCandle']:
             arrBuy.append(symbols)
 
         # #------------Volume Buzzers---------------
@@ -95,5 +120,6 @@ def Scrapper(timeframe):
         #
         # if df.iloc[-1]['Volume']:
         #     arrVol.append(symbols)
-
-    return (arrBuy, arrSell, arrSqueeze)
+    end = time.time()
+    print(f'scan completed in :{end - start}')
+    return (arrBuy, arrSell, arrSqueeze, arrBreakout)
